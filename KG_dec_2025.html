@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 1200px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"font": {"color": "white"}, "group": "Event", "id": "Ai Trends And Moments", "label": "Ai Trends And Moments", "shape": "dot", "title": "Event"}, {"font": {"color": "white"}, "group": "Technology", "id": "Nano Banana", "label": "Nano Banana", "shape": "dot", "title": "Technology"}, {"font": {"color": "white"}, "group": "Department", "id": "Mathematical Sciences \u0026 Analytics", "label": "Mathematical Sciences \u0026 Analytics", "shape": "dot", "title": "Department"}, {"font": {"color": "white"}, "group": "Concept", "id": "Ai Ethics And Trust", "label": "Ai Ethics And Trust", "shape": "dot", "title": "Concept"}, {"font": {"color": "white"}, "group": "Location", "id": "Singapore", "label": "Singapore", "shape": "dot", "title": "Location"}, {"font": {"color": "white"}, "group": "Organization", "id": "Ngee Ann Poly", "label": "Ngee Ann Poly", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Organization", "id": "Temasek Poly", "label": "Temasek Poly", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Organization", "id": "Sutd", "label": "Sutd", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Person", "id": "Architects Of Ai", "label": "Architects Of Ai", "shape": "dot", "title": "Person"}, {"font": {"color": "white"}, "group": "Organization", "id": "Singapore Poly", "label": "Singapore Poly", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Organization", "id": "Five Polytechnics", "label": "Five Polytechnics", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Educational_program", "id": "Diploma In Computing With Law", "label": "Diploma In Computing With Law", "shape": "dot", "title": "Educational_program"}, {"font": {"color": "white"}, "group": "Award", "id": "Time\u2019S 2025 Person Of The Year", "label": "Time\u2019S 2025 Person Of The Year", "shape": "dot", "title": "Award"}, {"font": {"color": "white"}, "group": "Concept", "id": "Industry Partnerships", "label": "Industry Partnerships", "shape": "dot", "title": "Concept"}, {"font": {"color": "white"}, "group": "Technology", "id": "Ai Chatbot", "label": "Ai Chatbot", "shape": "dot", "title": "Technology"}, {"font": {"color": "white"}, "group": "Organization", "id": "Smu", "label": "Smu", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Concept", "id": "Feynman Technique", "label": "Feynman Technique", "shape": "dot", "title": "Concept"}, {"font": {"color": "white"}, "group": "Organization", "id": "Nus", "label": "Nus", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Person", "id": "Sutd Alumna", "label": "Sutd Alumna", "shape": "dot", "title": "Person"}, {"font": {"color": "white"}, "group": "Concept", "id": "Ai Developments", "label": "Ai Developments", "shape": "dot", "title": "Concept"}, {"font": {"color": "white"}, "group": "Technology", "id": "Ai", "label": "Ai", "shape": "dot", "title": "Technology"}, {"font": {"color": "white"}, "group": "Technology", "id": "Media Tech", "label": "Media Tech", "shape": "dot", "title": "Technology"}, {"font": {"color": "white"}, "group": "Technology", "id": "Generative Ai Tools", "label": "Generative Ai Tools", "shape": "dot", "title": "Technology"}, {"font": {"color": "white"}, "group": "Technology", "id": "Data Analytics", "label": "Data Analytics", "shape": "dot", "title": "Technology"}, {"font": {"color": "white"}, "group": "Organization", "id": "Ntu", "label": "Ntu", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Concept", "id": "Interdisciplinary Skills", "label": "Interdisciplinary Skills", "shape": "dot", "title": "Concept"}, {"font": {"color": "white"}, "group": "Program", "id": "Skillsfuture", "label": "Skillsfuture", "shape": "dot", "title": "Program"}, {"font": {"color": "white"}, "group": "Organization", "id": "Institutes", "label": "Institutes", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Concept", "id": "University Collaborations", "label": "University Collaborations", "shape": "dot", "title": "Concept"}, {"font": {"color": "white"}, "group": "Organization", "id": "Openai", "label": "Openai", "shape": "dot", "title": "Organization"}, {"font": {"color": "white"}, "group": "Technology", "id": "Nvidia\u2019S Ai Chips", "label": "Nvidia\u2019S Ai Chips", "shape": "dot", "title": "Technology"}, {"font": {"color": "white"}, "group": "Concept", "id": "Chatbots, Tutors And Sparring Partners", "label": "Chatbots, Tutors And Sparring Partners", "shape": "dot", "title": "Concept"}, {"font": {"color": "white"}, "group": "Technology", "id": "Feynman Ai Bot", "label": "Feynman Ai Bot", "shape": "dot", "title": "Technology"}, {"font": {"color": "white"}, "group": "Event", "id": "Deepfake Scams", "label": "Deepfake Scams", "shape": "dot", "title": "Event"}, {"font": {"color": "white"}, "group": "Concept", "id": "Ai Safety", "label": "Ai Safety", "shape": "dot", "title": "Concept"}, {"font": {"color": "white"}, "group": "Technology", "id": "Anatbuddy", "label": "Anatbuddy", "shape": "dot", "title": "Technology"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Five Polytechnics", "label": "upgrade_courses_for", "to": "Ai Developments"}, {"arrows": "to", "from": "Ngee Ann Poly", "label": "launch", "to": "Diploma In Computing With Law"}, {"arrows": "to", "from": "Singapore Poly", "label": "rename", "to": "Mathematical Sciences \u0026 Analytics"}, {"arrows": "to", "from": "Temasek Poly", "label": "integrate", "to": "Generative Ai Tools"}, {"arrows": "to", "from": "Ai", "label": "associated_with", "to": "Data Analytics"}, {"arrows": "to", "from": "Ai", "label": "associated_with", "to": "Interdisciplinary Skills"}, {"arrows": "to", "from": "Chatbots, Tutors And Sparring Partners", "label": "changing", "to": "Ai"}, {"arrows": "to", "from": "Nus", "label": "use", "to": "Ai"}, {"arrows": "to", "from": "Smu", "label": "use", "to": "Ai"}, {"arrows": "to", "from": "Sutd", "label": "use", "to": "Ai"}, {"arrows": "to", "from": "Ntu", "label": "introduce", "to": "Anatbuddy"}, {"arrows": "to", "from": "Feynman Ai Bot", "label": "developed_by", "to": "Sutd Alumna"}, {"arrows": "to", "from": "Feynman Ai Bot", "label": "based_on", "to": "Feynman Technique"}, {"arrows": "to", "from": "Institutes", "label": "expand", "to": "Industry Partnerships"}, {"arrows": "to", "from": "Ai", "label": "combine_with", "to": "Media Tech"}, {"arrows": "to", "from": "Temasek Poly", "label": "introduce_course", "to": "Ai"}, {"arrows": "to", "from": "Ngee Ann Poly", "label": "increase", "to": "Industry Partnerships"}, {"arrows": "to", "from": "University Collaborations", "label": "increase", "to": "Ntu"}, {"arrows": "to", "from": "Ai Trends And Moments", "label": "dominated", "to": "Singapore"}, {"arrows": "to", "from": "Openai", "label": "set_up_shop", "to": "Singapore"}, {"arrows": "to", "from": "Nano Banana", "label": "feature", "to": "Ai"}, {"arrows": "to", "from": "Ai", "label": "courses_surged", "to": "Skillsfuture"}, {"arrows": "to", "from": "Deepfake Scams", "label": "raised_awareness", "to": "Ai"}, {"arrows": "to", "from": "Ai Ethics And Trust", "label": "emphasised", "to": "Ai"}, {"arrows": "to", "from": "Architects Of Ai", "label": "named", "to": "Time\u2019S 2025 Person Of The Year"}, {"arrows": "to", "from": "Nvidia\u2019S Ai Chips", "label": "powering", "to": "Ai"}, {"arrows": "to", "from": "Ai Chatbot", "label": "prompted_debate", "to": "Ai Safety"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"forceAtlas2Based": {"gravitationalConstant": -100, "centralGravity": 0.01, "springLength": 200, "springConstant": 0.08}, "minVelocity": 0.75, "solver": "forceAtlas2Based"}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
