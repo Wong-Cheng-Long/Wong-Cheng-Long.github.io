@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang=en><head>
+<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Hidden Object</title>
+<link rel=stylesheet href=../assets/styles.css>
+</head>
+<body>
+<header><div class=brand><div class=logo>🔎 Find 3</div><div><div style="font-weight:900">Hidden Object</div><div class=muted style="font-size:12px">🔎 Find 3</div></div></div><a class=btn href=../index.html>Back</a></header>
+<main class=container><section class=card>
+<div class=muted>Find and tap: Bookmark, QR Sticker, Key. Unlock clue fragment #6.</div>
+<div class=kpi>
+  <div class=box><div class=label>Found</div><div class=value id=found>0 / 3</div></div>
+  <div class=box><div class=label>Miss taps</div><div class=value id=miss>0</div></div>
+</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<div id=scene style="border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);overflow:hidden;touch-action:manipulation">
+<svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+  <rect width="800" height="420" fill="rgba(255,255,255,0.02)"/>
+  <rect x="20" y="60" width="760" height="320" rx="18" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="60" y="100" width="680" height="14" rx="7" fill="rgba(255,255,255,0.06)"/>
+  <rect x="60" y="200" width="680" height="14" rx="7" fill="rgba(255,255,255,0.06)"/>
+  <rect x="60" y="300" width="680" height="14" rx="7" fill="rgba(255,255,255,0.06)"/>
+  <rect x="80" y="118" width="26" height="70" rx="6" fill="rgba(122,167,255,0.25)"/>
+  <rect x="112" y="118" width="18" height="70" rx="6" fill="rgba(46,229,157,0.22)"/>
+  <rect x="136" y="118" width="30" height="70" rx="6" fill="rgba(255,255,255,0.10)"/>
+  <rect x="172" y="118" width="20" height="70" rx="6" fill="rgba(255,255,255,0.14)"/>
+  <rect x="198" y="118" width="26" height="70" rx="6" fill="rgba(255,107,107,0.18)"/>
+  <rect x="86" y="218" width="22" height="70" rx="6" fill="rgba(255,255,255,0.10)"/>
+  <rect x="114" y="218" width="30" height="70" rx="6" fill="rgba(122,167,255,0.18)"/>
+  <rect x="150" y="218" width="18" height="70" rx="6" fill="rgba(46,229,157,0.18)"/>
+  <rect x="174" y="218" width="26" height="70" rx="6" fill="rgba(255,255,255,0.14)"/>
+  <g data-item="bookmark">
+    <rect x="560" y="118" width="22" height="58" rx="6" fill="rgba(255,107,107,0.22)" stroke="rgba(255,107,107,0.35)"/>
+    <path d="M560 166 L571 156 L582 166" fill="rgba(255,107,107,0.22)"/>
+  </g>
+  <g data-item="qr">
+    <rect x="700" y="235" width="40" height="40" rx="8" fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.22)"/>
+    <rect x="708" y="243" width="10" height="10" fill="rgba(255,255,255,0.35)"/>
+    <rect x="722" y="257" width="10" height="10" fill="rgba(255,255,255,0.35)"/>
+    <rect x="734" y="244" width="6" height="18" fill="rgba(255,255,255,0.25)"/>
+  </g>
+  <g data-item="key">
+    <circle cx="330" cy="335" r="12" fill="rgba(122,167,255,0.18)" stroke="rgba(122,167,255,0.35)"/>
+    <rect x="340" y="331" width="42" height="8" rx="4" fill="rgba(122,167,255,0.18)" stroke="rgba(122,167,255,0.35)"/>
+    <rect x="372" y="339" width="7" height="10" fill="rgba(122,167,255,0.18)"/>
+    <rect x="360" y="339" width="7" height="7" fill="rgba(122,167,255,0.18)"/>
+  </g>
+</svg>
+</div>
+<div class=row style="margin-top:12px"><button class=btn id=restart>Restart</button></div>
+</section></main>
+<script src=../assets/common.js></script>
+<script>
+const GAME_ID='hidden',CLUE='2';
+const foundEl=document.getElementById('found');
+const missEl=document.getElementById('miss');
+const scene=document.getElementById('scene');
+let found=new Set(),miss=0;
+function render(){foundEl.textContent=`${found.size} / 3`;missEl.textContent=miss;if(found.size===3){EscapeCommon.completeGame(GAME_ID,CLUE);EscapeCommon.toast('All found! Clue unlocked ✅','ok');EscapeCommon.backToHub(900);}}
+scene.onclick=(e)=>{const g=e.target.closest('[data-item]');if(!g){miss++;EscapeCommon.toast('Miss!','bad');render();return;}const item=g.getAttribute('data-item');if(found.has(item))return;found.add(item);g.style.opacity='0.35';EscapeCommon.toast('Found ✅','ok');render();};
+document.getElementById('restart').onclick=()=>{found=new Set();miss=0;document.querySelectorAll('[data-item]').forEach(x=>x.style.opacity='1');render();};
+render();
+</script>
+</body></html>

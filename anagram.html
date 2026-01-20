@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang=en><head>
+<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Unscramble</title>
+<link rel=stylesheet href=../assets/styles.css>
+</head>
+<body>
+<header><div class=brand><div class=logo>🔤 Timer 90s</div><div><div style="font-weight:900">Unscramble</div><div class=muted style="font-size:12px">🔤 Timer 90s</div></div></div><a class=btn href=../index.html>Back</a></header>
+<main class=container><section class=card>
+<div class=muted>Solve 3 anagrams in 90s to unlock clue fragment #2.</div>
+<div class=kpi>
+  <div class=box><div class=label>Time</div><div class=value id=time>90</div></div>
+  <div class=box><div class=label>Solved</div><div class=value id=solved>0 / 3</div></div>
+</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<h2 style="margin:0 0 6px" id=scramble></h2>
+<input class=input id=answer placeholder="Type the word..." autocomplete=off>
+<div class=row style="margin-top:10px"><button class="btn" id=skip>Skip</button></div>
+<div class=muted style="font-size:12px;margin-top:10px" id=hint></div>
+</section></main>
+<script src=../assets/common.js></script>
+<script>
+const GAME_ID='anagram',CLUE='1',TARGET=3;
+const WORDS=[
+ {w:'BOOK',h:'You read this.'},{w:'MAP',h:'Helps you navigate.'},{w:'STACK',h:'Where books live.'},
+ {w:'QUIET',h:'Library rule.'},{w:'DESK',h:'Borrowing counter.'},{w:'STUDY',h:'Freshman mission.'}
+];
+let solved=0,current=null,used=new Set();
+const timeEl=document.getElementById('time');
+const solvedEl=document.getElementById('solved');
+const scrEl=document.getElementById('scramble');
+const ans=document.getElementById('answer');
+const hint=document.getElementById('hint');
+const timer=EscapeCommon.createTimer(90,t=>timeEl.textContent=t,()=>{EscapeCommon.toast("Time's up!",'bad');lock(true);});
+function shuf(s){const a=[...s];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));a[i],a[j]=a[j],a[i];}return a.join('');}
+function next(){if(used.size===WORDS.length)used.clear();do{current=WORDS[Math.floor(Math.random()*WORDS.length)];}while(used.has(current.w));used.add(current.w);
+ let scr=shuf(current.w);if(scr===current.w)scr=shuf(current.w);
+ scrEl.textContent=scr.split('').join(' ');hint.textContent='Hint: '+current.h;ans.value='';ans.focus();}
+function lock(x){ans.disabled=x;}
+function check(){const g=ans.value.trim().toUpperCase();if(!g)return;if(g===current.w){solved++;solvedEl.textContent=`${solved} / ${TARGET}`;EscapeCommon.toast('Correct ✅','ok');
+ if(solved>=TARGET){timer.stop();EscapeCommon.completeGame(GAME_ID,CLUE);EscapeCommon.toast('Clue unlocked ✅','ok');EscapeCommon.backToHub(900);return;}next();}
+}
+ans.addEventListener('input',()=>{if(ans.value.trim().length===current.w.length)check();});
+document.getElementById('skip').onclick=next;
+solvedEl.textContent='0 / 3';next();timer.start();
+</script>
+</body></html>

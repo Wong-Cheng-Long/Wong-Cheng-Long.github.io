@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang=en><head>
+<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Pattern Lock</title>
+<link rel=stylesheet href=../assets/styles.css>
+</head>
+<body>
+<header><div class=brand><div class=logo>🔐 Streak 5</div><div><div style="font-weight:900">Pattern Lock</div><div class=muted style="font-size:12px">🔐 Streak 5</div></div></div><a class=btn href=../index.html>Back</a></header>
+<main class=container><section class=card>
+<div class=muted>Answer 5 in a row. 2 mistakes = fail. Unlock clue fragment #7.</div>
+<div class=kpi>
+  <div class=box><div class=label>Streak</div><div class=value id=streak>0 / 5</div></div>
+  <div class=box><div class=label>Mistakes</div><div class=value id=mistakes>0 / 2</div></div>
+</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<h2 style="margin:0 0 10px" id=q></h2>
+<div class=row id=choices></div>
+<div class=row style="margin-top:12px"><button class=btn id=restart>Restart</button></div>
+</section></main>
+<script src=../assets/common.js></script>
+<script>
+const GAME_ID='pattern',CLUE='9';
+const qEl=document.getElementById('q');
+const choices=document.getElementById('choices');
+const streakEl=document.getElementById('streak');
+const mistakesEl=document.getElementById('mistakes');
+let streak=0,mistakes=0,current=null;
+const QUESTIONS=[
+ {q:'📕 → 📘 → 📗 → ?',a:'📕',opts:['📕','📘','📗','❌']},
+ {q:'2, 4, 8, 16, ?',a:'32',opts:['18','24','32','64']},
+ {q:'A, C, E, G, ?',a:'I',opts:['H','I','J','K']},
+ {q:'Mon, Wed, Fri, ?',a:'Sun',opts:['Sat','Sun','Tue','Thu']},
+ {q:'1, 1, 2, 3, 5, ?',a:'8',opts:['6','7','8','9']},
+];
+function render(){streakEl.textContent=`${streak} / 5`;mistakesEl.textContent=`${mistakes} / 2`;}
+function pick(){current=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];qEl.textContent=current.q;choices.innerHTML='';
+ for(const opt of current.opts){const b=document.createElement('button');b.className='btn';b.textContent=opt;b.onclick=()=>choose(opt);choices.appendChild(b);} }
+function choose(opt){
+ if(opt===current.a){streak++;EscapeCommon.toast('Correct ✅','ok');
+   if(streak>=5){EscapeCommon.completeGame(GAME_ID,CLUE);EscapeCommon.toast('Clue unlocked ✅','ok');EscapeCommon.backToHub(900);return;}
+ } else {mistakes++;EscapeCommon.toast('Wrong ❌','bad');streak=0;
+   if(mistakes>=2){EscapeCommon.toast('Failed. Restart.','bad');[...choices.querySelectorAll('button')].forEach(b=>b.disabled=true);return;}
+ }
+ render();pick();
+}
+document.getElementById('restart').onclick=()=>{streak=0;mistakes=0;render();pick();};
+render();pick();
+</script>
+</body></html>

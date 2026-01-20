@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang=en><head>
+<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Reaction Tap</title>
+<link rel=stylesheet href=../assets/styles.css>
+</head>
+<body>
+<header><div class=brand><div class=logo>⚡ Tap 📘</div><div><div style="font-weight:900">Reaction Tap</div><div class=muted style="font-size:12px">⚡ Tap 📘</div></div></div><a class=btn href=../index.html>Back</a></header>
+<main class=container><section class=card>
+<div class=muted>Tap 📘 only. Tapping ❌ loses a life. Score 12 in 60s to unlock clue fragment #5.</div>
+<div class=kpi>
+  <div class=box><div class=label>Time</div><div class=value id=time>60</div></div>
+  <div class=box><div class=label>Score</div><div class=value id=score>0</div></div>
+  <div class=box><div class=label>Lives</div><div class=value id=lives>3</div></div>
+</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<div id=arena style="height:260px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);display:grid;place-items:center;font-size:64px;user-select:none">📘</div>
+<div class=row style="margin-top:12px"><button class=btn id=restart>Restart</button></div>
+</section></main>
+<script src=../assets/common.js></script>
+<script>
+const GAME_ID='reaction',CLUE='7',TARGET=12;
+const timeEl=document.getElementById('time');
+const scoreEl=document.getElementById('score');
+const livesEl=document.getElementById('lives');
+const arena=document.getElementById('arena');
+let score=0,lives=3,current='📘',interval=null;
+const timer=EscapeCommon.createTimer(60,t=>timeEl.textContent=t,()=>{stop();if(score>=TARGET)win();else EscapeCommon.toast("Time's up. Try again.",'bad');});
+function rand(){const r=Math.random();return r<0.65?'📘':(r<0.85?'📗':'❌');}
+function tick(){current=rand();arena.textContent=current;}
+function stop(){timer.stop();if(interval){clearInterval(interval);interval=null;}}
+function win(){stop();EscapeCommon.completeGame(GAME_ID,CLUE);EscapeCommon.toast('Win! Clue unlocked ✅','ok');EscapeCommon.backToHub(900);}
+function start(){stop();score=0;lives=3;scoreEl.textContent=score;livesEl.textContent=lives;timer.setLeft(60);timer.start();tick();interval=setInterval(tick,650);}
+arena.onclick=()=>{if(timer.getLeft()<=0)return;
+ if(current==='📘'){score++;scoreEl.textContent=score;EscapeCommon.toast('+1 ✅','ok');if(score>=TARGET)win();else tick();}
+ else if(current==='❌'){lives--;livesEl.textContent=lives;EscapeCommon.toast('Wrong! -1 life','bad');if(lives<=0){stop();EscapeCommon.toast('Out of lives. Restart.','bad');}else tick();}
+ else {EscapeCommon.toast('Only 📘 counts','bad');tick();}
+};
+document.getElementById('restart').onclick=start;start();
+</script>
+</body></html>

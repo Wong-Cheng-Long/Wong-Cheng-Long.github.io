@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang=en><head>
+<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>3-Digit Code Lock</title>
+<link rel=stylesheet href=../assets/styles.css>
+</head>
+<body>
+<header><div class=brand><div class=logo>🔢 Crack it</div><div><div style="font-weight:900">3-Digit Code Lock</div><div class=muted style="font-size:12px">🔢 Crack it</div></div></div><a class=btn href=../index.html>Back</a></header>
+<main class=container><section class=card>
+<div class=muted>90 seconds, 6 tries. Unlock clue fragment #8.</div>
+<div class=kpi>
+  <div class=box><div class=label>Time</div><div class=value id=time>90</div></div>
+  <div class=box><div class=label>Tries left</div><div class=value id=tries>6</div></div>
+</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<div class=muted><b>Hints</b>: sum of digits is <b id=sumHint></b>, middle digit is largest, first digit is odd.</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<input id=guess class=input inputmode=numeric maxlength=3 placeholder="Enter 3 digits (e.g. 357)">
+<div class=row style="margin-top:10px"><button class=btn id=tryBtn>Try</button><button class=btn id=restart>Restart</button></div>
+<div class=muted style="font-size:12px;margin-top:10px" id=feedback></div>
+</section></main>
+<script src=../assets/common.js></script>
+<script>
+const GAME_ID='codelock',CLUE='6';
+const CODE='357';
+const SUM=[...CODE].reduce((a,c)=>a+Number(c),0);
+document.getElementById('sumHint').textContent=SUM;
+const timeEl=document.getElementById('time');
+const triesEl=document.getElementById('tries');
+const guess=document.getElementById('guess');
+const feedback=document.getElementById('feedback');
+let tries=6;
+const timer=EscapeCommon.createTimer(90,t=>timeEl.textContent=t,()=>{EscapeCommon.toast("Time's up!",'bad');lock(true);});
+function lock(x){guess.disabled=x;document.getElementById('tryBtn').disabled=x;}
+function reset(){tries=6;triesEl.textContent=tries;feedback.textContent='';guess.value='';lock(false);timer.setLeft(90);timer.start();guess.focus();}
+function hintCheck(g){const d=[...g].map(Number);return {
+  sumOk:d.reduce((a,x)=>a+x,0)===SUM,
+  midLargest:d[1]>d[0] && d[1]>d[2],
+  firstOdd:d[0]%2===1
+};}
+function attempt(){const g=guess.value.trim();if(!/^\d{3}$/.test(g)){EscapeCommon.toast('Enter exactly 3 digits.','bad');return;}
+ tries--;triesEl.textContent=tries;
+ if(g===CODE){timer.stop();EscapeCommon.completeGame(GAME_ID,CLUE);EscapeCommon.toast('Unlocked! Clue ✅','ok');EscapeCommon.backToHub(900);return;}
+ const h=hintCheck(g);
+ feedback.textContent=`Nope. sum:${h.sumOk?'✓':'×'}  middle-largest:${h.midLargest?'✓':'×'}  first-odd:${h.firstOdd?'✓':'×'}`;
+ if(tries<=0){timer.stop();lock(true);EscapeCommon.toast('Out of tries. Restart.','bad');}
+}
+document.getElementById('tryBtn').onclick=attempt;
+guess.addEventListener('keydown',e=>{if(e.key==='Enter')attempt();});
+document.getElementById('restart').onclick=reset;
+reset();
+</script>
+</body></html>

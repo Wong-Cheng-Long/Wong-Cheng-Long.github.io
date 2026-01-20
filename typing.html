@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang=en><head>
+<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Speed Typing</title>
+<link rel=stylesheet href=../assets/styles.css>
+</head>
+<body>
+<header><div class=brand><div class=logo>⌨️ Don't drop</div><div><div style="font-weight:900">Speed Typing</div><div class=muted style="font-size:12px">⌨️ Don't drop</div></div></div><a class=btn href=../index.html>Back</a></header>
+<main class=container><section class=card>
+<div class=muted>Type 8 words before they drop (no Enter). Unlock clue fragment #3.</div>
+<div class=kpi>
+  <div class=box><div class=label>Score</div><div class=value id=score>0 / 8</div></div>
+  <div class=box><div class=label>Danger</div><div class=value id=danger>0%</div></div>
+</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<div id=belt style="position:relative;height:220px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);overflow:hidden">
+  <div id=word style="position:absolute;left:12px;top:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(122,167,255,.25);background:rgba(122,167,255,.10);font-weight:900;white-space:nowrap"></div>
+</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<input id=input class=input placeholder="Type here..." autocomplete=off>
+<div class=row style="margin-top:10px"><button class=btn id=restart>Restart</button></div>
+</section></main>
+<script src=../assets/common.js></script>
+<script>
+const GAME_ID='typing',CLUE='8',TARGET=8;
+const WORDS=['SP','LIBRARY','QUIET','STUDY','BOOK','LOAN','STACK','SHELF','DESK','MAP'];
+const belt=document.getElementById('belt');
+const wordEl=document.getElementById('word');
+const input=document.getElementById('input');
+const scoreEl=document.getElementById('score');
+const dangerEl=document.getElementById('danger');
+let score=0,x=12,y=10,vx=1.2,vy=0.9,current='',running=true,raf=null;
+function pick(){current=WORDS[Math.floor(Math.random()*WORDS.length)];wordEl.textContent=current;input.value='';input.focus();x=12;y=10;vx=1.2+score*0.12;vy=0.9+score*0.10;}
+function loop(){if(!running)return;const w=belt.clientWidth;const maxX=Math.max(12,w-wordEl.offsetWidth-12);x+=vx;if(x>=maxX||x<=12)vx*=-1;y+=vy;
+ wordEl.style.left=x+'px';wordEl.style.top=y+'px';
+ const danger=Math.min(100,Math.floor((y/(belt.clientHeight-40))*100));dangerEl.textContent=danger+'%';
+ if(y>belt.clientHeight-40){running=false;EscapeCommon.toast('Game over — it dropped.','bad');cancelAnimationFrame(raf);return;}
+ raf=requestAnimationFrame(loop);
+}
+function start(){running=true;score=0;scoreEl.textContent=`${score} / ${TARGET}`;pick();if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);}
+input.addEventListener('input',()=>{const typed=input.value.trim().toUpperCase();if(!typed)return;if(typed===current){score++;scoreEl.textContent=`${score} / ${TARGET}`;EscapeCommon.toast('Nice ✅','ok');
+  if(score>=TARGET){running=false;EscapeCommon.completeGame(GAME_ID,CLUE);EscapeCommon.toast('Clue unlocked ✅','ok');EscapeCommon.backToHub(900);return;}
+  pick();}});
+document.getElementById('restart').onclick=start;start();
+</script>
+</body></html>

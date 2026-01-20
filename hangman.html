@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang=en><head>
+<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Hangman</title>
+<link rel=stylesheet href=../assets/styles.css>
+</head>
+<body>
+<header><div class=brand><div class=logo>🧩 Hangman</div><div><div style="font-weight:900">Hangman</div><div class=muted style="font-size:12px">🧩 Hangman</div></div></div><a class=btn href=../index.html>Back</a></header>
+<main class=container><section class=card>
+<div class=muted>6 mistakes max. Solve to unlock clue fragment #1.</div>
+<div class=kpi>
+  <div class=box><div class=label>Mistakes</div><div class=value id=mist>0</div></div>
+  <div class=box><div class=label>Word</div><div class=value id=prog>_</div></div>
+</div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<div class=row id=letters></div>
+<div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+<button class=btn id=restart>New word</button>
+</section></main>
+<script src=../assets/common.js></script>
+<script>
+const GAME_ID='hangman', CLUE='3';
+const WORDS=['LIBRARY','BORROW','CATALOG','ARCHIVE','SHELF','STUDY'];
+let word='', guessed=new Set(), mistakes=0, maxMist=6;
+const mist=document.getElementById('mist');
+const prog=document.getElementById('prog');
+const letters=document.getElementById('letters');
+function pick(){word=WORDS[Math.floor(Math.random()*WORDS.length)];guessed=new Set();mistakes=0;render();}
+function win(){return [...word].every(ch=>guessed.has(ch));}
+function render(){
+  mist.textContent=mistakes;
+  prog.textContent=[...word].map(ch=>guessed.has(ch)?ch:'_').join(' ');
+  letters.innerHTML='';
+  for(let i=65;i<=90;i++){const ch=String.fromCharCode(i);const b=document.createElement('button');
+    b.className='btn';b.textContent=ch;b.disabled=guessed.has(ch)||mistakes>=maxMist||win();
+    b.onclick=()=>{if(guessed.has(ch))return;guessed.add(ch);if(!word.includes(ch))mistakes++;render();};
+    letters.appendChild(b);
+  }
+  if(mistakes>=maxMist){EscapeCommon.toast(`Game over. Word was ${word}.`,'bad');}
+  if(win()) {EscapeCommon.completeGame(GAME_ID,CLUE);EscapeCommon.toast('Solved! Clue unlocked ✅','ok');EscapeCommon.backToHub(900);}
+}
+document.getElementById('restart').onclick=pick;
+pick();
+</script>
+</body></html>
