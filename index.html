@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang=en>
+<head>
+  <meta charset=utf-8>
+  <meta name=viewport content="width=device-width,initial-scale=1">
+  <title>SP Library Escape Mini-Games</title>
+  <link rel=stylesheet href=assets/styles.css>
+</head>
+<body>
+<header>
+  <div class=brand><div class=logo>📚</div><div><div style="font-weight:900">SP Library Escape</div><div class=muted style="font-size:12px">Mini-games hub (freshman edition)</div></div></div>
+  <button class=btn id=resetBtn>Reset</button>
+</header>
+<main class=container>
+  <section class=card>
+    <h2 style="margin:0 0 6px">How it works</h2>
+    <div class=muted>Finish each game to collect a clue fragment. Combine fragments 1→8 for the final code.</div>
+  </section>
+  <section class=grid id=grid></section>
+  <section class=card>
+    <h2 style="margin:0 0 8px">Clue fragments</h2>
+    <div id=clues class=row style="gap:8px"></div>
+    <div style="height:1px;background:rgba(255,255,255,.08);margin:12px 0"></div>
+    <div class=muted>Final code:</div>
+    <div style="margin-top:6px;font-size:20px;font-weight:900"><code id=finalCode>????</code></div>
+  </section>
+</main>
+<script src=assets/common.js></script>
+<script>
+const GAMES=[
+  {id:'hangman',name:'Hangman',icon:'🧩',href:'games/hangman.html',clueIndex:1},
+  {id:'anagram',name:'Unscramble',icon:'🔤',href:'games/anagram.html',clueIndex:2},
+  {id:'typing',name:'Speed Typing',icon:'⌨️',href:'games/typing.html',clueIndex:3},
+  {id:'simon',name:'Memory Flash',icon:'🟦',href:'games/simon.html',clueIndex:4},
+  {id:'reaction',name:'Reaction Tap',icon:'⚡',href:'games/reaction.html',clueIndex:5},
+  {id:'hidden',name:'Hidden Object',icon:'🔎',href:'games/hidden.html',clueIndex:6},
+  {id:'pattern',name:'Pattern Lock',icon:'🔐',href:'games/pattern.html',clueIndex:7},
+  {id:'codelock',name:'3-Digit Code Lock',icon:'🔢',href:'games/codelock.html',clueIndex:8},
+];
+const grid=document.getElementById('grid');
+const cluesEl=document.getElementById('clues');
+const finalEl=document.getElementById('finalCode');
+function render(){
+  const p=EscapeCommon.getProgress();
+  grid.innerHTML='';
+  for(const g of GAMES){
+    const done=!!p[g.id]?.completed;
+    const a=document.createElement('a');
+    a.className='game';
+    a.href=g.href;
+    a.innerHTML=`<div class=logo style="width:42px;height:42px;border-radius:16px">${g.icon}</div><div style="flex:1"><div style="font-weight:900">${g.name}</div><div class=muted style="font-size:12px">Clue #${g.clueIndex}</div></div><div class="tag ${done?'ok':'todo'}">${done?'Done ✅':'Not done'}</div>`;
+    grid.appendChild(a);
+  }
+  cluesEl.innerHTML='';
+  const frags=[];
+  for(const g of [...GAMES].sort((a,b)=>a.clueIndex-b.clueIndex)){
+    const frag=p[g.id]?.clue;
+    const d=document.createElement('div');
+    d.className='tag';
+    d.innerHTML=`${g.clueIndex}: ${frag?`<code>${frag}</code>`:'Locked'}`;
+    cluesEl.appendChild(d);
+    if(frag) frags.append(frag);
+  }
+  finalEl.textContent=(frags.length===GAMES.length)?frags.join(''):'????';
+}
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Reset all progress?')){EscapeCommon.resetProgress();render();}};
+render();
+</script>
+</body>
+</html>
